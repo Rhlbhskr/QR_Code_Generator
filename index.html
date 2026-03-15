@@ -529,17 +529,21 @@
         canvas.width = d;
         canvas.height = d;
         const ctx = canvas.getContext('2d');
+
+        // Solid white background so the whole code sits inside a white card
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, d, d);
-        ctx.drawImage(qrCanvas, 0, 0, d, d);
 
+        // Draw QR slightly inset so a clean white frame is visible all around
+        const frame = Math.round(d * 0.08); // ~8% border
+        ctx.drawImage(qrCanvas, frame, frame, d - frame * 2, d - frame * 2);
+
+        // Draw logo directly on top so it visually merges with the QR pattern
         if (logoImage && logoPct > 0) {
           const logoW = (d * logoPct) / 100;
           const logoH = (d * logoPct) / 100;
           const x = (d - logoW) / 2;
           const y = (d - logoH) / 2;
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x - 4, y - 4, logoW + 8, logoH + 8);
           ctx.drawImage(logoImage, x, y, logoW, logoH);
         }
 
@@ -1177,17 +1181,21 @@
         canvas.width = d;
         canvas.height = d;
         const ctx = canvas.getContext('2d');
+
+        // Solid white background so the whole code sits inside a white card
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, d, d);
-        ctx.drawImage(qrCanvas, 0, 0, d, d);
 
+        // Draw QR slightly inset so a clean white frame is visible all around
+        const frame = Math.round(d * 0.08); // ~8% border
+        ctx.drawImage(qrCanvas, frame, frame, d - frame * 2, d - frame * 2);
+
+        // Draw logo directly on top so it visually merges with the QR pattern
         if (logoImage && logoPct > 0) {
           const logoW = (d * logoPct) / 100;
           const logoH = (d * logoPct) / 100;
           const x = (d - logoW) / 2;
           const y = (d - logoH) / 2;
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x - 4, y - 4, logoW + 8, logoH + 8);
           ctx.drawImage(logoImage, x, y, logoW, logoH);
         }
 
