@@ -437,7 +437,7 @@
             </div>
             <div class="option-group">
               <label for="logoSize">Logo size %</label>
-              <input type="number" id="logoSize" value="22" min="10" max="35" step="2" />
+              <input type="number" id="logoSize" value="22" min="10" max="30" step="2" />
             </div>
           </div>
 
@@ -512,7 +512,8 @@
             width: size,
             height: size,
             colorDark: '#000000',
-            colorLight: '#ffffff'
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
           });
         } catch (e) {
           document.body.removeChild(tempDiv);
@@ -535,7 +536,7 @@
         ctx.fillRect(0, 0, d, d);
 
         // Draw QR slightly inset so a clean white frame is visible all around
-        const frame = Math.round(d * 0.08); // ~8% border
+        const frame = Math.round(d * 0.10); // ~10% border
         ctx.drawImage(qrCanvas, frame, frame, d - frame * 2, d - frame * 2);
 
         // Clear a window in the center and place the logo untouched,
@@ -558,14 +559,18 @@
       }
 
       function generate() {
-        const text = (qrInput.value || '').trim();
+        let text = (qrInput.value || '').trim();
+
+if (text && !text.startsWith("http://") && !text.startsWith("https://") && text.includes(".")) {
+  text = "https://" + text;
+}
         if (!text) {
           alert('Please enter a URL or text to encode.');
           qrInput.focus();
           return;
         }
         const size = Math.min(512, Math.max(128, parseInt(qrSize.value, 10) || 256));
-        const logoPct = Math.min(35, Math.max(10, parseInt(logoSize.value, 10) || 22));
+        const logoPct = Math.min(30,Math.max(10, parseInt(logoSize.value, 10) || 22));
         try {
           drawQRWithLogo(text, size, logoPct);
           showPreview(true);
