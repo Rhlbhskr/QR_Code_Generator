@@ -538,13 +538,37 @@
         const frame = Math.round(d * 0.08); // ~8% border
         ctx.drawImage(qrCanvas, frame, frame, d - frame * 2, d - frame * 2);
 
-        // Draw logo directly on top so it visually merges with the QR pattern
+        // Use the logo as a mask that \"burns into\" the QR pattern
         if (logoImage && logoPct > 0) {
-          const logoW = (d * logoPct) / 100;
-          const logoH = (d * logoPct) / 100;
-          const x = (d - logoW) / 2;
-          const y = (d - logoH) / 2;
-          ctx.drawImage(logoImage, x, y, logoW, logoH);
+          const logoW = Math.round((d * logoPct) / 100);
+          const logoH = Math.round((d * logoPct) / 100);
+          const x = Math.round((d - logoW) / 2);
+          const y = Math.round((d - logoH) / 2);
+
+          // Draw logo into an offscreen canvas, then read its pixels
+          const logoCanvas = document.createElement('canvas');
+          logoCanvas.width = logoW;
+          logoCanvas.height = logoH;
+          const logoCtx = logoCanvas.getContext('2d');
+          logoCtx.drawImage(logoImage, 0, 0, logoW, logoH);
+          const { data } = logoCtx.getImageData(0, 0, logoW, logoH);
+
+          const threshold = 200; // lower = more aggressive merge
+          for (let j = 0; j < logoH; j++) {
+            for (let i = 0; i < logoW; i++) {
+              const idx = (j * logoW + i) * 4;
+              const r = data[idx];
+              const g = data[idx + 1];
+              const b = data[idx + 2];
+              const a = data[idx + 3];
+              if (a === 0) continue;
+              const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+              if (lum < threshold) {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + i, y + j, 1, 1);
+              }
+            }
+          }
         }
 
         document.body.removeChild(tempDiv);
@@ -1190,13 +1214,37 @@
         const frame = Math.round(d * 0.08); // ~8% border
         ctx.drawImage(qrCanvas, frame, frame, d - frame * 2, d - frame * 2);
 
-        // Draw logo directly on top so it visually merges with the QR pattern
+        // Use the logo as a mask that \"burns into\" the QR pattern
         if (logoImage && logoPct > 0) {
-          const logoW = (d * logoPct) / 100;
-          const logoH = (d * logoPct) / 100;
-          const x = (d - logoW) / 2;
-          const y = (d - logoH) / 2;
-          ctx.drawImage(logoImage, x, y, logoW, logoH);
+          const logoW = Math.round((d * logoPct) / 100);
+          const logoH = Math.round((d * logoPct) / 100);
+          const x = Math.round((d - logoW) / 2);
+          const y = Math.round((d - logoH) / 2);
+
+          // Draw logo into an offscreen canvas, then read its pixels
+          const logoCanvas = document.createElement('canvas');
+          logoCanvas.width = logoW;
+          logoCanvas.height = logoH;
+          const logoCtx = logoCanvas.getContext('2d');
+          logoCtx.drawImage(logoImage, 0, 0, logoW, logoH);
+          const { data } = logoCtx.getImageData(0, 0, logoW, logoH);
+
+          const threshold = 200; // lower = more aggressive merge
+          for (let j = 0; j < logoH; j++) {
+            for (let i = 0; i < logoW; i++) {
+              const idx = (j * logoW + i) * 4;
+              const r = data[idx];
+              const g = data[idx + 1];
+              const b = data[idx + 2];
+              const a = data[idx + 3];
+              if (a === 0) continue;
+              const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+              if (lum < threshold) {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + i, y + j, 1, 1);
+              }
+            }
+          }
         }
 
         document.body.removeChild(tempDiv);
